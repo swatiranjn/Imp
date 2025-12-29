@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Countdown Surprise</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0f172a;
+      font-family: Arial, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .timer {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .box {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      min-width: 80px;
+    }
+
+    .number {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .label {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 5px;
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 28px;
+      display: none;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="timer">
+      <div class="box">
+        <div id="hours" class="number">00</div>
+        <div class="label">HOURS</div>
+      </div>
+      <div class="box">
+        <div id="minutes" class="number">00</div>
+        <div class="label">MINUTES</div>
+      </div>
+      <div class="box">
+        <div id="seconds" class="number">00</div>
+        <div class="label">SECONDS</div>
+      </div>
+    </div>
+
+    <div id="message"><p>
+    </p>🎉 congratulations you have successfully wasted 10 seconds<p>
+        <p>now tell me one thing..<p>
+        </p><b>
+            <!--Tab to edit-->
+        </b>kyu nhi ho rhi padhai??
+            <!--Tab to edit-->
+        </b><p>
+            <!--Tab to edit-->
+        </p></div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    // 🔧 CHANGE DATE HERE
+    // For testing: new Date(Date.now() + 10000)  // 10 seconds
+    const targetDate = new Date(Date.now() + 10000);
+
+    const h = document.getElementById("hours");
+    const m = document.getElementById("minutes");
+    const s = document.getElementById("seconds");
+    const message = document.getElementById("message");
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        clearInterval(interval);
+        h.textContent = m.textContent = s.textContent = "00";
+        message.style.display = "block";
+        startConfetti();
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      h.textContent = String(hours).padStart(2, "0");
+      m.textContent = String(minutes).padStart(2, "0");
+      s.textContent = String(seconds).padStart(2, "0");
+    }, 1000);
+
+    // 🎉 CONFETTI
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+
+    function startConfetti() {
+      for (let i = 0; i < 200; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 6 + 2,
+          d: Math.random() * 10,
+          color: `hsl(${Math.random() * 360},100%,50%)`
+        });
+      }
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.y += p.d;
+        if (p.y > canvas.height) p.y = 0;
+      });
+      requestAnimationFrame(animateConfetti);
+    }
+  </script>
+
+</body>
+</html>
